@@ -1,0 +1,10 @@
+torch>=2.0.0
+torchvision>=0.15.0
+torchaudio>=2.0.0
+transformers==4.34.0
+python-telegram-bot[job-queue]>=20.0
+anthropic>=0.7.0
+pymilvus[model]
+voyageai>=0.1.5
+FlagEmbedding==1.1.9
+tqdm>=4.65.0 
