@@ -43,6 +43,8 @@ services:
     environment:
       ETCD_ENDPOINTS: etcd:2379
       MINIO_ADDRESS: minio:9000
+      MILVUS_ROOT_PASSWORD: ms92QwGhjclrA6CP6dTtzta294HFkp1j
+      MILVUS_USER: gomunkul
     volumes:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/milvus:/var/lib/milvus
     healthcheck:
@@ -64,8 +66,10 @@ services:
     volumes:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/datastore:/app/datastore
     environment:
-      MILVUS_HOST: standalone
+      MILVUS_HOST: milvus
       MILVUS_PORT: 19530
+      MILVUS_USER: gomunkul
+      MILVUS_PASSWORD: ms92QwGhjclrA6CP6dTtzta294HFkp1j
     depends_on:
       - milvus
     restart: unless-stopped

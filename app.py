@@ -30,6 +30,12 @@ ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 VOYAGE_API_KEY = os.getenv("VOYAGE_API_KEY")
 COHERE_API_KEY = os.getenv("COHERE_API_KEY")
 TELEGRAM_API_KEY = os.getenv("TELEGRAM_API_KEY")
+
+MILVUS_HOST = os.getenv("MILVUS_HOST")
+MILVUS_PORT = os.getenv("MILVUS_PORT")
+MILVUS_USER = os.getenv("MILVUS_USER")
+MILVUS_PASSWORD = os.getenv("MILVUS_PASSWORD")
+
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.ERROR
@@ -72,7 +78,11 @@ class MilvusContextualRetriever:
         # For Milvus-lite, uri is a local path like "./milvus.db"
         # For Milvus standalone service, uri is like "http://localhost:19530"
         # For Zilliz Clond, please set `uri` and `token`, which correspond to the [Public Endpoint and API key](https://docs.zilliz.com/docs/on-zilliz-cloud-console#cluster-details) in Zilliz Cloud.
-        self.client = MilvusClient(uri)
+        self.client = MilvusClient(
+            uri=uri,
+            user=MILVUS_USER,
+            password=MILVUS_PASSWORD,
+        )
 
         self.embedding_function = dense_embedding_function
 
@@ -302,7 +312,7 @@ dense_ef = VoyageEmbeddingFunction(
 # sparse_ef = BGEM3EmbeddingFunction()
 cohere_rf = CohereRerankFunction(api_key=COHERE_API_KEY)
 contextual_retriever = MilvusContextualRetriever(
-    uri="http://milvus:19530",
+    uri=f"http://{MILVUS_HOST}:{MILVUS_PORT}",
     collection_name="contextual_gomunkul",
     dense_embedding_function=dense_ef,
     use_sparse=False,
