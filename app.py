@@ -105,6 +105,11 @@ class MilvusContextualRetriever:
             pass
 
     def build_collection(self):
+        # Check if collection exists
+        if self.client.list_collections().get(self.collection_name) is not None:
+            print(f"Collection {self.collection_name} already exists")
+            return
+
         schema = self.client.create_schema(
             auto_id=True,
             enable_dynamic_field=True,
