@@ -31,8 +31,7 @@ VOYAGE_API_KEY = os.getenv("VOYAGE_API_KEY")
 COHERE_API_KEY = os.getenv("COHERE_API_KEY")
 TELEGRAM_API_KEY = os.getenv("TELEGRAM_API_KEY")
 
-MILVUS_HOST = os.getenv("MILVUS_HOST")
-MILVUS_PORT = os.getenv("MILVUS_PORT")
+MILVUS_URL = os.getenv("MILVUS_URL")
 MILVUS_USER = os.getenv("MILVUS_USER")
 MILVUS_PASSWORD = os.getenv("MILVUS_PASSWORD")
 
@@ -317,7 +316,7 @@ dense_ef = VoyageEmbeddingFunction(
 # sparse_ef = BGEM3EmbeddingFunction()
 cohere_rf = CohereRerankFunction(api_key=COHERE_API_KEY)
 contextual_retriever = MilvusContextualRetriever(
-    uri=f"http://{MILVUS_HOST}:{MILVUS_PORT}",
+    uri=MILVUS_URL,
     collection_name="contextual_gomunkul",
     dense_embedding_function=dense_ef,
     use_sparse=False,
@@ -328,14 +327,22 @@ contextual_retriever = MilvusContextualRetriever(
 
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    # Skip messages in group chats that don't start with bot username
+    text = update.message.text
+    if update.message.chat.type in ["group", "supergroup"]:
+        user_name = f"@{context.bot.username}"
+        if not update.message.text.startswith(user_name):
+            return
+        # Remove bot username from message text
+        text = update.message.text[len(user_name)+1:].strip()
     force_tool = anthropic.NOT_GIVEN
     tools = anthropic.NOT_GIVEN
-    if update.message.text.lower().startswith("запомни"):
+    if text.lower().startswith("запомни"):
         force_tool = memorize_tool["name"]
         tools = [memorize_tool]
     # Extract hashtags from the message text
-    hashtags = [word[1:].lower() for word in update.message.text.split() if word.startswith('#')]
-    message_text = ' '.join(word for word in update.message.text.split() if not word.startswith('#'))
+    hashtags = [word[1:].lower() for word in text.split() if word.startswith('#')]
+    message_text = ' '.join(word for word in text.split() if not word.startswith('#'))
     docs = contextual_retriever.search(message_text, tags=hashtags)
     print(docs)
     if tools != anthropic.NOT_GIVEN:
@@ -474,7 +481,7 @@ def wait_for_milvus():
     max_retries = 30
     for i in range(max_retries):
         try:
-            connections.connect(host='milvus', port='19530')
+            connections.connect(uri=MILVUS_URL)
             print("Successfully connected to Milvus")
             return
         except Exception as e:

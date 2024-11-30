@@ -66,10 +66,9 @@ services:
     volumes:
       - ${DOCKER_VOLUME_DIRECTORY:-.}/datastore:/app/datastore
     environment:
-      MILVUS_HOST: milvus
-      MILVUS_PORT: 19530
+      MILVUS_URL: http://milvus:19530
       MILVUS_USER: gomunkul
-      MILVUS_PASSWORD: ms92QwGhjclrA6CP6dTtzta294HFkp1j
+      MILVUS_PASSWORD: ms92QwGhjclrA6
     depends_on:
       - milvus
     restart: unless-stopped
