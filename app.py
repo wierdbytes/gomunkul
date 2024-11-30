@@ -7,7 +7,7 @@ from pymilvus.model.dense import VoyageEmbeddingFunction
 # from pymilvus.model.hybrid import BGEM3EmbeddingFunction
 from pymilvus.model.reranker import CohereRerankFunction
 
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Set
 from typing import Callable
 from pymilvus import (
     MilvusClient,
@@ -34,6 +34,13 @@ TELEGRAM_API_KEY = os.getenv("TELEGRAM_API_KEY")
 MILVUS_URL = os.getenv("MILVUS_URL")
 MILVUS_USER = os.getenv("MILVUS_USER")
 MILVUS_PASSWORD = os.getenv("MILVUS_PASSWORD")
+
+# Add approved chats configuration
+APPROVED_CHAT_IDS: Set[int] = {
+    int(chat_id.strip())
+    for chat_id in os.getenv("APPROVED_CHAT_IDS", "").split(",")
+    if chat_id.strip()
+}
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -327,6 +334,11 @@ contextual_retriever = MilvusContextualRetriever(
 
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    # Check if chat is approved
+    chat_id = update.message.chat_id
+    if chat_id not in APPROVED_CHAT_IDS:
+        print(f"Skipping message from non-approved chat {chat_id}")
+        return
     # Skip messages in group chats that don't start with bot username
     text = update.message.text
     if update.message.chat.type in ["group", "supergroup"]:
@@ -371,6 +383,11 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # await update.message.reply_text(response)
 
 async def handle_memo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    # Check if chat is approved
+    chat_id = update.message.chat_id
+    if chat_id not in APPROVED_CHAT_IDS:
+        print(f"Skipping memo command from non-approved chat {chat_id}")
+        return
     # Extract project name if provided after /memo command
     message_parts = update.message.text.split(maxsplit=1)
     if len(message_parts) < 2:
