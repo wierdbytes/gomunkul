@@ -106,7 +106,7 @@ class MilvusContextualRetriever:
 
     def build_collection(self):
         # Check if collection exists
-        if self.client.list_collections().get(self.collection_name) is not None:
+        if self.collection_name in self.client.list_collections():
             print(f"Collection {self.collection_name} already exists")
             return
 
