@@ -69,7 +69,7 @@ services:
       MILVUS_URL: http://milvus:19530
       MILVUS_USER: gomunkul
       MILVUS_PASSWORD: ms92QwGhjclrA6
-      APPROVED_CHAT_IDS: "55199283,-421052863"
+      APPROVED_CHAT_IDS: "55199283,-421052863,-490025465,-775382895"
     depends_on:
       - milvus
     restart: unless-stopped
