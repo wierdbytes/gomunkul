@@ -4,3 +4,4 @@ volumes/
 datastore/
 *.db
 dump/
+docker-compose.override.yaml

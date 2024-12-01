@@ -1,0 +1,17 @@
+
+services:
+  minio:
+    environment:
+      MINIO_ACCESS_KEY: aaaaaaaaaaaaaaaaaaaaaa
+      MINIO_SECRET_KEY: bbbbbbbbbbbbbbbbbbbbbb
+
+  milvus:
+    environment:
+      MINIO_ACCESS_KEY_ID: aaaaaaaaaaaaaaaaaaaaaa
+      MINIO_SECRET_ACCESS_KEY: bbbbbbbbbbbbbbbbbbbbbb
+      MILVUS_ROOT_PASSWORD: xxxxxxxxxxxxxxxxxxxxxxxxxx
+
+  gomunkul:
+    environment:
+      MILVUS_PASSWORD: xxxxxxxxxxxx
+      APPROVED_CHAT_IDS: "1234567890,-9876543210"
