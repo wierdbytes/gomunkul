@@ -498,7 +498,11 @@ def wait_for_milvus():
     max_retries = 30
     for i in range(max_retries):
         try:
-            connections.connect(uri=MILVUS_URL)
+            connections.connect(
+                uri=MILVUS_URL,
+                user=MILVUS_USER,
+                password=MILVUS_PASSWORD,
+            )
             print("Successfully connected to Milvus")
             return
         except Exception as e:
